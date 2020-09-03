@@ -1,0 +1,314 @@
+---
+title: "survival_analysis_examples"
+author: "Soumya Banerjee"
+date: "27 August 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Survival analysis
+
+This is an R Markdown document that outlines some examples of survival analysis.
+
+* Adapted from:
+https://rviews.rstudio.com/2017/09/25/survival-analysis-with-r/
+
+* www.stat.columbia.edu/~madigan/W2025/notes/survival.pdf
+
+* http://data.princeton.edu/wws509/notes/
+
+* https://en.wikipedia.org/wiki/Survival_function
+
+* https://rpkgs.datanovia.com/survminer/index.html
+
+
+
+## Load data
+
+The variables in the veteran dataset are: 
+
+* trt: 1=standard 2=test 
+
+* celltype: 1=squamous, 2=small cell, 3=adeno, 4=large 
+
+* time: survival time in days 
+
+* status: censoring status 
+
+* karno: Karnofsky performance score (100=good) 
+
+* diagtime: months from diagnosis to randomization 
+
+* age: in years 
+
+* prior: prior therapy 0=no, 10=yes
+
+
+
+```{r, include=FALSE}
+
+library(survival)
+library(ggplot2)
+library(sqldf)
+library(ggfortify)
+library(ranger)
+library(dplyr)
+library(knitr)
+library(rmarkdown)
+library(survminer)
+
+data("veteran")
+head(veteran)
+
+```
+
+## Kaplan-Meier survival analysis
+
+* this is a non-parametric model
+
+* https://en.wikipedia.org/wiki/Kaplan?Meier_estimator
+
+
+```{r, include=FALSE}
+
+surv_object <- survival::Surv(time = veteran$time, event = veteran$status)
+
+summary(surv_object)
+
+as.data.frame.table(surv_object)
+
+as.table(surv_object)
+
+as.numeric(surv_object)
+
+km_fit <- survival::survfit(formula = surv_object ~ 1, data = veteran)
+
+summary(km_fit)
+
+```
+
+
+
+```{r, echo=FALSE}
+
+autoplot(km_fit)
+
+plot(km_fit)
+
+```
+
+
+## Kaplan-Meier survival analysis with covariates
+
+```{r, include=FALSE}
+
+surv_object <- survival::Surv(time = veteran$time, event = veteran$status)
+
+km_fit_treatment <- survival::survfit(formula = surv_object ~ trt, data = veteran)
+
+summary(km_fit_treatment)
+
+```
+
+```{r, echo=FALSE}
+
+ggplot2::autoplot(km_fit_treatment)
+
+```
+
+
+## Fit a Cox-proportional hazards model
+
+* this is a parametric model
+
+* https://en.wikipedia.org/wiki/Proportional_hazards_model
+
+
+```{r, include=FALSE}
+
+surv_object <- survival::Surv(time = veteran$time, event = veteran$status)
+
+cxph <- survival::coxph(formula = surv_object ~ trt + diagtime + age, data = veteran)
+
+summary(cxph)
+
+cxph_fit <- survival::survfit(cxph)
+
+summary(cxph_fit)
+
+summary(cxph_fit)$coef
+
+# plot survival curve
+plot(cxph_fit)
+
+```
+
+
+```{r, echo=FALSE}
+
+ggplot2::autoplot(cxph_fit)
+
+plot(cxph_fit)
+
+```
+
+
+## Better time to event plots
+
+* https://rpkgs.datanovia.com/survminer/index.html
+
+
+```{r, echo=FALSE}
+
+
+###########################################
+# Better plots for tiem to event analysis
+###########################################
+
+# from
+# https://rpkgs.datanovia.com/survminer/index.html
+# install.packages("survminer")
+library("survminer")
+library("survival")
+fit <- survfit(Surv(time, status) ~ sex, data = lung)
+
+ggsurvplot(fit, data = lung)
+
+ggsurvplot(fit, data = lung, censor.shape="|", censor.size = 4)
+
+ggsurvplot(
+          fit, 
+          data = lung, 
+          size = 1,                 # change line size
+          palette = 
+            c("#E7B800", "#2E9FDF"),# custom color palettes
+          conf.int = TRUE,          # Add confidence interval
+          pval = TRUE,              # Add p-value
+          risk.table = TRUE,        # Add risk table
+          risk.table.col = "strata",# Risk table color by groups
+          legend.labs = 
+            c("Male", "Female"),    # Change legend labels
+          risk.table.height = 0.25, # Useful to change when you have multiple groups
+          ggtheme = theme_bw()      # Change ggplot2 theme
+)
+
+```
+
+
+
+## Cox proportional hazards models
+
+* https://rpkgs.datanovia.com/survminer/index.html
+
+
+```{r, echo=FALSE}
+
+fit <- survival::coxph(formula = Surv(time = time, event = status) ~ sex + age, data = lung)
+survminer::ggadjustedcurves(fit = fit, data = lung, variable = "sex")
+
+```
+
+
+## Diagnostics
+
+* https://rpkgs.datanovia.com/survminer/index.html
+
+
+```{r, echo=FALSE}
+
+fit <- survival::coxph(formula = Surv(time = time, event = status) ~ sex + age, data = lung)
+ftest <- survival::cox.zph(fit = fit)
+
+# test assumptions of proportional hazards model
+survminer::ggcoxzph(fit = ftest)
+survminer::ggcoxdiagnostics(fit = fit, type = "schoenfeld", ox.scale = "time")
+survminer::ggcoxdiagnostics(fit = fit, type = "deviance",   ox.scale = "linear.predictions")
+
+survminer::ggadjustedcurves(fit = fit, data = lung, variable = "sex")
+
+```
+
+
+## Visualization of parameters and hazard ratios (HR)
+
+* https://rpkgs.datanovia.com/survminer/index.html
+
+
+```{r, echo=FALSE}
+
+summary(fit)
+
+survminer::ggforest(model = fit, data = lung)
+
+```
+
+
+## Use strata to fit models
+
+* This fits a separate baseline hazard for each factor (here it is gender)
+
+* https://stats.stackexchange.com/questions/256148/stratification-in-cox-model
+
+
+```{r, echo=FALSE}
+
+fit <- survival::coxph(formula = Surv(time = time, event = status) ~ sex + age + strata(sex), data = lung)
+summary(fit)
+
+```
+
+## Better statistics
+
+
+```{r, echo=FALSE}
+
+# advanced analysis
+# from http://egret.psychol.cam.ac.uk/not_advertised/RNC/annabel_alzd_dlb_survival.R
+
+DOWNLOAD_DIR <- "download"
+OUTPUT_DIR <- "output"
+dir.create(DOWNLOAD_DIR, showWarnings=FALSE)
+dir.create(OUTPUT_DIR, showWarnings=FALSE)
+
+RESULTS_FILENAME <- sprintf("%s/%s", OUTPUT_DIR, "results.txt")
+
+surv_object <- survival::Surv(time = veteran$time, event = veteran$status)
+
+cxph <- survival::coxph(formula = surv_object ~ trt + diagtime + age, data = veteran)
+
+summary(cxph)
+
+cxph_fit <- survival::survfit(cxph)
+
+summary(cxph_fit)
+
+
+# list[p1, median1] =  survival_info(survfit_or_coxph = cxph, newdata = veteran, strata = veteran$celltype)
+# save_figure(p1, "survival_dx.pdf", "Survival by diagnosis only")
+# debug_quantity(median1, filename=RESULTS_FILENAME, print_only=TRUE)
+
+
+```
+
+
+
+
+
+
+
+
+
+## References
+
+* https://rviews.rstudio.com/2017/09/25/survival-analysis-with-r/, URL accessed 01-01-2019
+
+* Kartsonaki C (2016) Survival analysis. Diagnostic Histopathol 22: 263?270.
+
+* www.stat.columbia.edu/~madigan/W2025/notes/survival.pdf, URL accessed 01-01-2019
+
+* http://data.princeton.edu/wws509/notes/, URL accessed 01-01-2019
+
+* https://rpkgs.datanovia.com/survminer/index.html, URL accessed 01-09-2019
