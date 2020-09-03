@@ -17,6 +17,10 @@ Examples of plotting survival curves and time to event analysis
 
 	* survival_trees.R
 
+* Meta-analysis of survival models and hazard ratios
+
+	* metaanalysis_hazard_ratios.R
+
 * Cheatsheets and other resources
 
 	* cheatsheets folder
