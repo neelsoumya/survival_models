@@ -5,6 +5,14 @@ Examples of plotting survival curves and time to event analysis
 
 	* survival_analysis_example.Rmd
 
+* Fitting survival models advanced inluding advanced options in Cox models, counting options in coxph(), diagnostics for Cox models, time dependent covariates in Cox models, etc
+
+	* survival_advanced.R
+
+	* expand_nomissing_study1.csv
+
+		* data file for survival data  
+
 * Fitting a piecewise exponential proportional hazards model
 
 	* piecewise_exponential_proportional_hazards_model.R
