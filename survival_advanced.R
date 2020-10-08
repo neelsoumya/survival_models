@@ -114,3 +114,60 @@ cox_int <- survival::coxph(formula = s ~ AGE,
                            subset = age.60 > 7,
                            control = survival::coxph.control(eps = 0.00001, iter.max = 1000)
                            )
+
+# NOTE: default is
+survival::coxph.control()
+
+cox_int <- survival::coxph(formula = s ~ AGE,
+                           data = file,
+                           subset = age.60 > 7,
+                           control = "survival::coxph.control`(eps = 0.00001, iter.max = 1000)"
+                          )
+
+
+cox_int <- survival::coxph(formula = s ~ AGE,
+                           data = file,
+                           subset = age.60 > 7,
+                           control = eval(parse(text = "survival::coxph.control(eps = 0.00001, iter.max = 1000)"))
+                          )
+
+
+cox_int <- survival::coxph(formula = s ~ AGE,
+                           data = file,
+                           subset = age.60 > 7,
+                           control = eval(parse(text = "survival::coxph.control()"))
+                          )
+
+eval(parse(text = "survival::coxph.control(eps = 0.00001, iter.max = 1000)"))
+
+
+eval(parse(text = "fn_ptr = survival::coxph.control(eps = 0.00001, iter.max = 1000)"))
+
+cox_int <- survival::coxph(formula = s ~ AGE,
+                           data = file,
+                           subset = age.60 > 7,
+                           control = fn_ptr
+                          )
+
+
+
+
+#############################################
+# Time-dependent covariates
+#############################################
+
+# https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6015946/
+
+fit_tt <- survival::coxph(formula = Surv(time = time, event=status) ~ age + ph.karno + tt(ph.karno) + sex,
+                          data = lung,
+                          tt = function(x,t,...) x*log(t+20)
+                          )
+summary(fit_tt)
+
+#cox_zph_tt <- survival::cox.zph(fit = fit_tt,
+#                                transform = function(t) x*log(t+20)
+#                                )
+#plot(cox_zph_tt)
+
+cox_zph_time <- survival::cox.zph(fit = fit_tt)
+plot(cox_zph_time)
