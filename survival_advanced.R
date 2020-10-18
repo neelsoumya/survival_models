@@ -158,6 +158,9 @@ cox_int <- survival::coxph(formula = s ~ AGE,
 
 # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6015946/
 
+# excellent article
+# https://stackoverflow.com/questions/24488495/how-does-cox-zph-deal-with-time-dependent-covariates
+
 fit_tt <- survival::coxph(formula = Surv(time = time, event=status) ~ age + ph.karno + tt(ph.karno) + sex,
                           data = lung,
                           tt = function(x,t,...) x*log(t+20)
