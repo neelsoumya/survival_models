@@ -71,6 +71,13 @@ survfit_cox <- survival::survfit(formula = coxph_object)
 plot(survfit_cox)
 plot(survfit_cox, fun="cloglog")
 
+# add random noise
+survfit_cox$surv <- abs(rnorm(n = length(survfit_cox$surv), mean = survfit_cox$surv, sd = 0.1))
+survfit_cox$n.event <- abs(rnorm(n = length(survfit_cox$n.event), mean = survfit_cox$n.event, sd = 0.1))
+survfit_cox$n.risk <- abs(rnorm(n = length(survfit_cox$n.risk), mean = survfit_cox$n.risk, sd = 0.1))
+plot(survfit_cox)
+plot(survfit_cox, fun="cloglog")
+
 
 # statistics on survival object
 # stats::quantile(x = s)
@@ -157,7 +164,6 @@ cox_int <- survival::coxph(formula = s ~ AGE,
 #############################################
 
 # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6015946/
-
 # excellent article
 # https://stackoverflow.com/questions/24488495/how-does-cox-zph-deal-with-time-dependent-covariates
 
@@ -174,3 +180,13 @@ summary(fit_tt)
 
 cox_zph_time <- survival::cox.zph(fit = fit_tt)
 plot(cox_zph_time)
+
+
+#########################################################
+# Other useful resources for survival analysis are:
+# https://stats.stackexchange.com/questions/317109/how-do-you-interpret-coxph-output-for-the-stratified-prentice-williams-peter
+# 
+# https://stats.stackexchange.com/questions/93900/how-exactly-can-the-cox-model-ignore-exact-times?rq=1
+# 
+# https://stats.stackexchange.com/questions/144923/extended-cox-model-and-cox-zph/238964#238964
+#########################################################
