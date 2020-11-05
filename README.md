@@ -1,4 +1,4 @@
-Examples of plotting survival curves and time to event analysis
+Examples of plotting survival curves and time to event analysis.
 
 
 * Fitting a Kaplan-Meier and a Cox proportional hazards model
