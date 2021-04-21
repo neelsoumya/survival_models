@@ -1,5 +1,7 @@
 Examples of plotting survival curves and time to event analysis.
 
+https://en.wikipedia.org/wiki/Survival_analysis
+
 
 * Fitting a Kaplan-Meier and a Cox proportional hazards model
 
