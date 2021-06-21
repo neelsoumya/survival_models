@@ -1,4 +1,4 @@
-Examples of plotting survival curves and time to event analysis.
+This is a repository of examples of plotting survival curves and time to event analysis.
 
 https://en.wikipedia.org/wiki/Survival_analysis
 
