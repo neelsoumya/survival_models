@@ -33,7 +33,7 @@ https://en.wikipedia.org/wiki/Survival_analysis
 
 * Cheatsheets and other resources
 
-	* cheatsheets folder
+	* cheatsheets
 
 * Adapted from 
 
@@ -62,3 +62,7 @@ https://en.wikipedia.org/wiki/Survival_analysis
     
     https://rpkgs.datanovia.com/survminer/index.html
     
+
+* Contact
+
+    * Soumya Banerjee
