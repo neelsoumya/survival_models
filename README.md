@@ -5,31 +5,31 @@ https://en.wikipedia.org/wiki/Survival_analysis
 
 * Fitting a Kaplan-Meier and a Cox proportional hazards model
 
-	* survival_analysis_example.Rmd
+	* `survival_analysis_example.Rmd`
 
 * Fitting survival models advanced inluding advanced options in Cox models, counting options in coxph(), diagnostics for Cox models, time dependent covariates in Cox models, etc
 
-	* survival_advanced.R
+	* `survival_advanced.R`
 
-	* expand_nomissing_study1.csv
+	* `expand_nomissing_study1.csv`
 
 		* data file for survival data  
 
 * Fitting a piecewise exponential proportional hazards model
 
-	* piecewise_exponential_proportional_hazards_model.R
+	* `piecewise_exponential_proportional_hazards_model.R`
 
 * Fitting a survival model using a GLM Poisson model
 
-	* simple_glm_survival.R
+	* `simple_glm_survival.R`
 
 * Fitting survival trees
 
-	* survival_trees.R
+	* `survival_trees.R`
 
 * Meta-analysis of survival models and hazard ratios
 
-	* metaanalysis_hazard_ratios.R
+	* `metaanalysis_hazard_ratios.R`
 
 * Cheatsheets and other resources
 
@@ -62,6 +62,7 @@ https://en.wikipedia.org/wiki/Survival_analysis
     
     https://rpkgs.datanovia.com/survminer/index.html
     
+    http://www.sthda.com/english/wiki/survival-analysis-basics
 
 * Contact
 
